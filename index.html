@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Lab | Tomas Tokatlian</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Fraunces:opsz,wght@9,900&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #0b1a14; font-family: 'Space Grotesk', sans-serif; color: #e0eadd; }
+        .font-serif { font-family: 'Fraunces', serif; }
+        .glass { background: rgba(18, 43, 34, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(26, 61, 49, 0.5); }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <nav class="fixed top-0 w-full h-20 bg-[#f2f7f0] flex items-center justify-between px-12 z-50 border-b border-gray-300">
+        <div class="logo font-serif text-3xl text-[#0b1a14] font-black">FinanceLab</div>
+        
+        <div class="flex gap-10 text-[#0b1a14] font-bold text-sm tracking-widest uppercase">
+            <a href="#market" class="hover:border-b-2 border-[#0b1a14] pb-1">Intelligence</a>
+            <a href="#credit" class="hover:border-b-2 border-[#0b1a14] pb-1">Credit</a>
+            <a href="#carry" class="hover:border-b-2 border-[#0b1a14] pb-1">Carry</a>
+        </div>
+
+        <div class="text-[#0b1a14] font-bold text-[10px] tracking-[0.2em] uppercase opacity-70">
+            Tomas Tokatlian / Analyst
+        </div>
+    </nav>
+
+    <main class="pt-40 px-6 max-w-7xl mx-auto text-center">
+        
+        <section id="market" class="mb-20">
+            <h1 class="font-serif text-[8vw] leading-none text-[#c1ff72] mb-12">
+                Intelligence<br>built around<br>markets.
+            </h1>
+
+            <div id="dolar-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                </div>
+        </section>
+
+        <section id="credit" class="py-20 border-t border-[#1a3d31]">
+            <h2 class="font-serif text-6xl text-[#c1ff72] mb-10">Unlock Capital.</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-left glass p-10 rounded-lg">
+                <div class="flex flex-col gap-6">
+                    <div>
+                        <label class="text-xs uppercase tracking-widest text-gray-400">Precio Contado</label>
+                        <input type="number" id="p_contado" value="100000" class="w-full bg-[#0b1a14] border border-[#1a3d31] p-4 rounded text-2xl focus:border-[#c1ff72] outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs uppercase tracking-widest text-gray-400">Cuotas Mensuales</label>
+                        <input type="range" id="cuotas" min="1" max="24" value="12" class="w-full accent-[#c1ff72]">
+                        <span id="cuotas_val" class="text-[#c1ff72]">12 cuotas</span>
+                    </div>
+                </div>
+                <div class="flex flex-col justify-center">
+                    <p class="text-xs uppercase tracking-widest text-gray-400">Valor Actual (PV)</p>
+                    <div id="resultado_pv" class="text-7xl font-serif text-[#c1ff72]">$0.00</div>
+                    <p id="recomendacion" class="mt-4 text-gray-400"></p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Lógica de Dólares
+        async function fetchDolar() {
+            const res = await fetch('https://dolarapi.com/v1/dolares');
+            const data = await res.json();
+            const grid = document.getElementById('dolar-grid');
+            
+            data.slice(0,6).forEach(d => {
+                grid.innerHTML += `
+                    <div class="glass p-8 rounded hover:border-[#c1ff72] transition-all">
+                        <p class="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-4">${d.nombre}</p>
+                        <div class="flex justify-between items-end">
+                            <div><p class="text-[8px] text-gray-500">COMPRA</p><p class="text-3xl font-bold">$${d.compra.toFixed(0)}</p></div>
+                            <div><p class="text-[8px] text-gray-500 text-right">VENTA</p><p class="text-3xl font-bold">$${d.venta.toFixed(0)}</p></div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Lógica de Crédito
+        function calcularCredito() {
+            const contado = parseFloat(document.getElementById('p_contado').value);
+            const n = parseInt(document.getElementById('cuotas').value);
+            const inf = 0.04; // 4% mensual estimado
+            
+            // Asumimos un recargo del 25% sobre el contado para el ejemplo
+            const total_cuotas = contado * 1.25;
+            const valor_cuota = total_cuotas / n;
+            
+            // Fórmula PV: $$PV = \sum_{t=1}^{n} \frac{Cuota}{(1+i)^t}$$
+            let pv = 0;
+            for(let t=1; t<=n; t++) {
+                pv += valor_cuota / Math.pow(1 + inf, t);
+            }
+
+            document.getElementById('resultado_pv').innerText = `$${pv.toLocaleString('es-AR', {minimumFractionDigits: 2})}`;
+            document.getElementById('cuotas_val').innerText = `${n} cuotas`;
+        }
+
+        document.getElementById('cuotas').addEventListener('input', calcularCredito);
+        document.getElementById('p_contado').addEventListener('input', calcularCredito);
+
+        fetchDolar();
+        calcularCredito();
+    </script>
+</body>
+</html>
