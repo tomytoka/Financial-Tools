@@ -52,9 +52,7 @@ class handler(BaseHTTPRequestHandler):
                             "updated": ahora
                         })
                         break
-            else:
-                # Fallback manual si la API interna se pone pesada (valores de tu foto)
-                resultados.append({"banco": "BBVA", "compra": 1360.0, "venta": 1410.0, "color": "#004481", "updated": ahora})
+            
         except: pass
 
         # --- RESPUESTA ---
