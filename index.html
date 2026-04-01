@@ -6,135 +6,175 @@
     <title>Finance Lab | Tomas Tokatlian</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Fraunces:opsz,wght@9,900&display=swap" rel="stylesheet">
+    
     <style>
-        body { background-color: #0b1a14; font-family: 'Space Grotesk', sans-serif; color: #e0eadd; }
+        body { 
+            background-color: #0b1a14; 
+            font-family: 'Space Grotesk', sans-serif; 
+            color: #e0eadd; 
+            scroll-behavior: smooth;
+        }
         .font-serif { font-family: 'Fraunces', serif; }
-        .glass { background: rgba(18, 43, 34, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(26, 61, 49, 0.5); }
+        
+        /* Efecto de cristal para las tarjetas */
+        .glass { 
+            background: rgba(18, 43, 34, 0.6); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(193, 255, 114, 0.1); 
+            transition: all 0.3s ease;
+        }
+        .glass:hover {
+            border-color: #c1ff72;
+            transform: translateY(-4px);
+            background: rgba(18, 43, 34, 0.8);
+        }
+
+        /* Navbar fija con desenfoque */
+        nav {
+            background: rgba(242, 247, 240, 0.95);
+            backdrop-filter: blur(10px);
+        }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <nav class="fixed top-0 w-full h-20 bg-[#f2f7f0] flex items-center justify-between px-12 z-50 border-b border-gray-300">
-        <div class="logo font-serif text-3xl text-[#0b1a14] font-black">FinanceLab</div>
+    <nav class="fixed top-0 w-full h-20 flex items-center justify-between px-12 z-50 border-b border-gray-300">
+        <div class="logo font-serif text-3xl text-[#0b1a14] font-black tracking-tighter">FinanceLab</div>
         
-        <div class="flex gap-10 text-[#0b1a14] font-bold text-sm tracking-widest uppercase">
-            <a href="#market" class="hover:border-b-2 border-[#0b1a14] pb-1">Intelligence</a>
-            <a href="#credit" class="hover:border-b-2 border-[#0b1a14] pb-1">Credit</a>
-            <a href="#carry" class="hover:border-b-2 border-[#0b1a14] pb-1">Carry</a>
+        <div class="flex gap-10 text-[#0b1a14] font-bold text-xs tracking-widest uppercase">
+            <a href="#market" class="hover:opacity-60 transition-opacity">Intelligence</a>
+            <a href="#credit" class="hover:opacity-60 transition-opacity">Credit</a>
+            <a href="#carry" class="hover:opacity-60 transition-opacity">Carry</a>
         </div>
 
-        <div class="text-[#0b1a14] font-bold text-[10px] tracking-[0.2em] uppercase opacity-70">
-            Tomas Tokatlian / Analyst
+        <div class="text-[#0b1a14] font-bold text-[10px] tracking-[0.2em] uppercase opacity-60 text-right">
+            Tomas Tokatlian <br> Analyst
         </div>
     </nav>
 
-    <main class="pt-40 px-6 max-w-7xl mx-auto text-center">
+    <main class="pt-48 px-8 max-w-7xl mx-auto pb-20">
         
-        <section id="market" class="mb-20">
-            <h1 class="font-serif text-[8vw] leading-none text-[#c1ff72] mb-12">
-                Intelligence<br>built around<br>markets.
+        <section id="market" class="text-center mb-32">
+            <h1 class="font-serif text-[9vw] leading-[0.85] text-[#c1ff72] mb-16 tracking-tighter">
+                Cotización<br>Dólar.
             </h1>
 
-            <div id="dolar-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-                
+            <div id="dolar-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left mb-24">
+                </div>
+
+            <div class="text-left mb-10 border-t border-[#1a3d31] pt-16">
+                <h2 class="font-serif text-6xl text-[#c1ff72] mb-2">Cotización Bancos</h2>
+                <p class="text-xs uppercase tracking-[0.4em] text-gray-500 font-bold">Comparativa de entidades minoristas</p>
+            </div>
+
+            <div id="bancos-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
                 </div>
         </section>
 
-        <section id="credit" class="py-20 border-t border-[#1a3d31]">
-            <h2 class="font-serif text-6xl text-[#c1ff72] mb-10">Unlock Capital.</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-left glass p-10 rounded-lg">
-                <div class="flex flex-col gap-6">
+        <section id="credit" class="py-32 border-t border-[#1a3d31]">
+            <h2 class="font-serif text-[7vw] leading-none text-[#c1ff72] mb-12 text-center">Unlock Capital.</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 glass p-12 rounded-2xl items-center">
+                <div class="flex flex-col gap-8">
                     <div>
-                        <label class="text-xs uppercase tracking-widest text-gray-400">Precio Contado</label>
-                        <input type="number" id="p_contado" value="100000" class="w-full bg-[#0b1a14] border border-[#1a3d31] p-4 rounded text-2xl focus:border-[#c1ff72] outline-none">
+                        <label class="text-[10px] uppercase tracking-widest text-gray-400 mb-2 block font-bold">Capital Contado ($)</label>
+                        <input type="number" id="p_contado" value="100000" class="w-full bg-[#0b1a14] border border-[#1a3d31] p-5 rounded-lg text-3xl font-bold focus:border-[#c1ff72] outline-none text-[#c1ff72]">
                     </div>
                     <div>
-                        <label class="text-xs uppercase tracking-widest text-gray-400">Cuotas Mensuales</label>
-                        <input type="range" id="cuotas" min="1" max="24" value="12" class="w-full accent-[#c1ff72]">
-                        <span id="cuotas_val" class="text-[#c1ff72]">12 cuotas</span>
+                        <label class="text-[10px] uppercase tracking-widest text-gray-400 mb-4 block font-bold">Plazo de Financiación</label>
+                        <input type="range" id="cuotas" min="1" max="24" value="12" class="w-full h-2 bg-[#1a3d31] rounded-lg appearance-none cursor-pointer accent-[#c1ff72]">
+                        <div class="flex justify-between mt-2 font-bold text-[#c1ff72]">
+                            <span id="cuotas_val">12 cuotas</span>
+                            <span>24 meses</span>
+                        </div>
                     </div>
                 </div>
-                <div class="flex flex-col justify-center">
-                    <p class="text-xs uppercase tracking-widest text-gray-400">Valor Actual (PV)</p>
-                    <div id="resultado_pv" class="text-7xl font-serif text-[#c1ff72]">$0.00</div>
-                    <p id="recomendacion" class="mt-4 text-gray-400"></p>
+
+                <div class="bg-[#0b1a14] p-10 rounded-xl border border-[#1a3d31] text-center lg:text-left">
+                    <p class="text-[10px] uppercase tracking-[0.3em] text-gray-500 mb-2 font-bold">Valor Actual Proyectado (PV)</p>
+                    <div id="resultado_pv" class="text-6xl md:text-7xl font-serif text-white tracking-tighter">$0.00</div>
+                    <div id="badge-ahorro" class="mt-6 inline-block px-4 py-2 bg-[#c1ff72] text-[#0b1a14] font-bold text-xs uppercase rounded-full">
+                        Cálculo basado en inflación 4%
+                    </div>
                 </div>
             </div>
         </section>
 
     </main>
 
+    <footer class="py-12 text-center opacity-30 text-[10px] tracking-widest uppercase border-t border-[#1a3d31]">
+        Developed by Tomas Tokatlian / Finance Analyst 2024
+    </footer>
+
     <script>
-        // Lógica de Dólares
+        // 1. Obtener Dólares de API General
         async function fetchDolar() {
-            const res = await fetch('https://dolarapi.com/v1/dolares');
-            const data = await res.json();
-            const grid = document.getElementById('dolar-grid');
-            
-            data.slice(0,6).forEach(d => {
-                grid.innerHTML += `
-                    <div class="glass p-8 rounded hover:border-[#c1ff72] transition-all">
-                        <p class="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-4">${d.nombre}</p>
+            try {
+                const res = await fetch('https://dolarapi.com/v1/dolares');
+                const data = await res.json();
+                const grid = document.getElementById('dolar-grid');
+                
+                grid.innerHTML = ''; 
+                data.slice(0,6).forEach(d => {
+                    grid.innerHTML += `
+                        <div class="glass p-8 rounded-lg">
+                            <p class="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-4 font-bold">${d.nombre}</p>
+                            <div class="flex justify-between items-end">
+                                <div><p class="text-[8px] text-gray-400 uppercase">Compra</p><p class="text-3xl font-bold">$${d.compra.toFixed(0)}</p></div>
+                                <div><p class="text-[8px] text-gray-400 uppercase text-right">Venta</p><p class="text-3xl font-bold">$${d.venta.toFixed(0)}</p></div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (e) { console.error("Error DolarAPI", e); }
+        }
+
+        // 2. Obtener BBVA de tu Scraper en Vercel
+        async function fetchBBVA() {
+            try {
+                const res = await fetch('/api/bankscraper'); 
+                const data = await res.json();
+                const grid = document.getElementById('bancos-grid');
+                
+                grid.innerHTML = `
+                    <div class="glass p-8 rounded-lg border-l-4 border-[#004481]">
+                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#004481] font-black mb-4">BBVA Minorista</p>
                         <div class="flex justify-between items-end">
-                            <div><p class="text-[8px] text-gray-500">COMPRA</p><p class="text-3xl font-bold">$${d.compra.toFixed(0)}</p></div>
-                            <div><p class="text-[8px] text-gray-500 text-right">VENTA</p><p class="text-3xl font-bold">$${d.venta.toFixed(0)}</p></div>
+                            <div><p class="text-[8px] text-gray-400 uppercase">Compra</p><p class="text-3xl font-bold">$${data.compra}</p></div>
+                            <div><p class="text-[8px] text-gray-400 uppercase text-right">Venta</p><p class="text-3xl font-bold">$${data.venta}</p></div>
                         </div>
                     </div>
                 `;
-            });
+            } catch (e) { console.error("Error Scraper", e); }
         }
-        //scraping de banco bbva
-        async function fetchBBVA() {
-    try {
-        // Llamamos a tu propia API en Vercel
-        const res = await fetch('/api/bankscraper');
-        const data = await res.json();
-        
-        const grid = document.getElementById('dolar-grid');
-        
-        // Agregamos la tarjeta del BBVA al principio de la grilla
-        const cardHtml = `
-            <div class="glass p-8 rounded border-l-4 border-[#004481] hover:border-[#c1ff72] transition-all">
-                <p class="text-[10px] uppercase tracking-[0.2em] text-[#004481] font-bold mb-4">BANCO BBVA</p>
-                <div class="flex justify-between items-end">
-                    <div><p class="text-[8px] text-gray-500">COMPRA</p><p class="text-3xl font-bold">$${data.compra}</p></div>
-                    <div><p class="text-[8px] text-gray-500 text-right">VENTA</p><p class="text-3xl font-bold">$${data.venta}</p></div>
-                </div>
-            </div>
-        `;
-        grid.insertAdjacentHTML('afterbegin', cardHtml);
-    } catch (error) {
-        console.error("Error scrapeando BBVA:", error);
-    }
-}
 
-// Llamamos a la función
-fetchBBVA();
-        // Lógica de Crédito
-        function calcularCredito() {
-            const contado = parseFloat(document.getElementById('p_contado').value);
+        // 3. Calculadora de Crédito
+        function calcular() {
+            const contado = parseFloat(document.getElementById('p_contado').value) || 0;
             const n = parseInt(document.getElementById('cuotas').value);
-            const inf = 0.04; // 4% mensual estimado
+            const inf = 0.04; // 4% mensual
             
-            // Asumimos un recargo del 25% sobre el contado para el ejemplo
-            const total_cuotas = contado * 1.25;
-            const valor_cuota = total_cuotas / n;
+            // Estimación de recargo financiero total (ejemplo 30%)
+            const total_financiado = contado * 1.30;
+            const valor_cuota = total_financiado / n;
             
-            // Fórmula PV: $$PV = \sum_{t=1}^{n} \frac{Cuota}{(1+i)^t}$$
             let pv = 0;
             for(let t=1; t<=n; t++) {
                 pv += valor_cuota / Math.pow(1 + inf, t);
             }
 
-            document.getElementById('resultado_pv').innerText = `$${pv.toLocaleString('es-AR', {minimumFractionDigits: 2})}`;
+            document.getElementById('resultado_pv').innerText = `$${pv.toLocaleString('es-AR', {minimumFractionDigits: 0})}`;
             document.getElementById('cuotas_val').innerText = `${n} cuotas`;
         }
 
-        document.getElementById('cuotas').addEventListener('input', calcularCredito);
-        document.getElementById('p_contado').addEventListener('input', calcularCredito);
+        // Eventos
+        document.getElementById('cuotas').addEventListener('input', calcular);
+        document.getElementById('p_contado').addEventListener('input', calcular);
 
+        // Inicializar
         fetchDolar();
-        calcularCredito();
+        fetchBBVA();
+        calcular();
     </script>
 </body>
 </html>
