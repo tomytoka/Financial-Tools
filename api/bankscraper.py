@@ -6,58 +6,61 @@ from datetime import datetime
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+        # User-Agent para que el banco no piense que somos un ataque
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
+        
         resultados = []
         ahora = datetime.now().strftime("%H:%M")
 
-        # --- BANCO NACIÓN (REAL SCRAPING) ---
+        # --- SCRAPING REAL BANCO NACIÓN ---
         try:
-            # Entramos a la web de cotizaciones del BNA
-            res = requests.get("https://www.bna.com.ar/Cotizador/MonedasHistorico", headers=headers, timeout=10)
+            # Usamos la URL que me pasaste
+            url_bna = "https://www.bna.com.ar/Personas"
+            res = requests.get(url_bna, headers=headers, timeout=10)
             soup = BeautifulSoup(res.text, 'html.parser')
+
+            # Buscamos la tabla que está en el visor de la foto
+            # El BNA usa una clase 'table cotizacion' para ese widget
+            tabla = soup.find('table', {'class': 'table cotizacion'})
             
-            # Buscamos la fila que dice "Dolar U.S.A"
-            fila_dolar = soup.find('td', string="Dolar U.S.A").parent
-            celdas = fila_dolar.find_all('td')
-            
-            # celdas[1] es Compra, celdas[2] es Venta
-            compra_bna = float(celdas[1].text.replace(',', '.'))
-            venta_bna = float(celdas[2].text.replace(',', '.'))
-            
-            resultados.append({
-                "banco": "Nación", 
-                "compra": compra_bna, 
-                "venta": venta_bna, 
-                "color": "#2D6853", 
-                "updated": ahora
-            })
+            if tabla:
+                # Buscamos la fila que dice "Dolar U.S.A"
+                for fila in tabla.find_all('tr'):
+                    columnas = fila.find_all('td')
+                    if len(columnas) > 0 and "Dolar U.S.A" in columnas[0].text:
+                        # Limpieza de datos: BNA usa ',' para decimales y '.' para miles
+                        # Ejemplo: "1.355,00" -> "1355.00"
+                        compra_raw = columnas[1].text.strip().replace('.', '').replace(',', '.')
+                        venta_raw = columnas[2].text.strip().replace('.', '').replace(',', '.')
+                        
+                        resultados.append({
+                            "banco": "Nación",
+                            "compra": float(compra_raw),
+                            "venta": float(venta_raw),
+                            "color": "#2D6853",
+                            "updated": ahora
+                        })
+                        break
         except Exception as e:
-            print(f"Error BNA: {e}")
+            print(f"Error scraping BNA: {e}")
 
-        # --- BANCO BBVA (REAL SCRAPING) ---
+        # --- LOS OTROS BANCOS (BBVA, ICBC, ETC) ---
+        # Como te conté, estos bancos usan JavaScript (React/Angular) 
+        # y Python 'requests' no puede ver los precios porque no ejecuta JS.
+        # Para que tu dashboard no esté vacío, acá te sugiero scrapear 
+        # una fuente que SÍ sea estática y tenga a todos los bancos, como 'Ámbito'.
+        
         try:
-            res = requests.get("https://www.bbva.com.ar/personas/productos/inversiones/cotizacion-moneda-extranjera.html", headers=headers, timeout=10)
-            soup = BeautifulSoup(res.text, 'html.parser')
-            
-            # El BBVA suele usar clases de CSS para los precios. 
-            # IMPORTANTE: Estos nombres de clase (.cuadro-cotizacion, etc) cambian seguido.
-            # Aquí buscamos el texto que contiene el signo $
-            precios = soup.find_all(string=lambda t: "$" in t)
-            # Limpiamos el texto para quedarnos solo con el número
-            compra_bbva = float(precios[0].replace('$', '').replace('.', '').replace(',', '.'))
-            venta_bbva = float(precios[1].replace('$', '').replace('.', '').replace(',', '.'))
-
-            resultados.append({
-                "banco": "BBVA", 
-                "compra": compra_bbva, 
-                "venta": venta_bbva, 
-                "color": "#004481", 
-                "updated": ahora
-            })
+            # Ejemplo de scraping de una fuente secundaria más estable
+            res_amb = requests.get("https://www.ambito.com/contenidos/dolar-bancos.html", headers=headers, timeout=10)
+            # Aquí iría la lógica para sacar BBVA, Galicia, etc. de Ámbito.
+            # Por ahora, te dejo el BNA que es el que ya logramos 'domar'.
         except:
             pass
 
-        # Respuesta final
+        # RESPUESTA JSON
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
