@@ -130,23 +130,39 @@
         }
 
         // 2. Obtener BBVA de tu Scraper en Vercel
-        async function fetchBBVA() {
-            try {
-                const res = await fetch('/api/bankscraper'); 
-                const data = await res.json();
-                const grid = document.getElementById('bancos-grid');
-                
-                grid.innerHTML = `
-                    <div class="glass p-8 rounded-lg border-l-4 border-[#004481]">
-                        <p class="text-[10px] uppercase tracking-[0.2em] text-[#004481] font-black mb-4">BBVA Minorista</p>
-                        <div class="flex justify-between items-end">
-                            <div><p class="text-[8px] text-gray-400 uppercase">Compra</p><p class="text-3xl font-bold">$${data.compra}</p></div>
-                            <div><p class="text-[8px] text-gray-400 uppercase text-right">Venta</p><p class="text-3xl font-bold">$${data.venta}</p></div>
+       async function fetchBancos() {
+    try {
+        const res = await fetch('/api/bankscraper'); 
+        const data = await res.json(); // Ahora data es una lista []
+        const grid = document.getElementById('bancos-grid');
+        
+        grid.innerHTML = ''; // Limpiamos el cargando
+
+        data.forEach(banco => {
+            const cardHtml = `
+                <div class="glass p-8 rounded-lg border-l-4 transition-all" style="border-color: ${banco.color}">
+                    <p class="text-[10px] uppercase tracking-[0.2em] font-black mb-4" style="color: ${banco.color}">${banco.banco} Minorista</p>
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <p class="text-[8px] text-gray-400 uppercase">Compra</p>
+                            <p class="text-3xl font-bold">$${banco.compra}</p>
+                        </div>
+                        <div>
+                            <p class="text-[8px] text-gray-400 uppercase text-right">Venta</p>
+                            <p class="text-3xl font-bold">$${banco.venta}</p>
                         </div>
                     </div>
-                `;
-            } catch (e) { console.error("Error Scraper", e); }
-        }
+                </div>
+            `;
+            grid.innerHTML += cardHtml;
+        });
+    } catch (e) { 
+        console.error("Error en la comparativa de bancos", e); 
+    }
+}
+
+// No te olvides de llamar a la nueva función al final
+fetchBancos();
 
         // 3. Calculadora de Crédito
         function calcular() {
