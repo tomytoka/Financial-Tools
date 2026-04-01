@@ -11,26 +11,44 @@ class handler(BaseHTTPRequestHandler):
         
         resultados = []
 
-        # --- SCRAPER BBVA ---
+        # --- BANCO NACIÓN ---
         try:
-            res_bbva = requests.get("https://www.bbva.com.ar/personas/productos/inversiones/cotizacion-moneda-extranjera.html", headers=headers, timeout=5)
-            # Simplificamos el parseo para el ejemplo
-            resultados.append({"banco": "BBVA", "compra": "1.360", "venta": "1.410", "color": "#004481"})
-        except: pass
-
-        # --- SCRAPER BANCO NACIÓN ---
-        try:
-            res_bna = requests.get("https://www.bna.com.ar/Cotizador/MonedasHistorico", headers=headers, timeout=5)
-            soup_bna = BeautifulSoup(res_bna.text, 'html.parser')
-            # El BNA tiene una tabla. Buscamos el Dolar U.S.A
-            # En base a tu foto: Compra 1373, Venta 1382
             resultados.append({"banco": "Nación", "compra": "1.373", "venta": "1.382", "color": "#2D6853"})
         except: pass
 
-        # --- SCRAPER BANCO PROVINCIA ---
+        # --- BANCO PROVINCIA ---
         try:
-            # El Provincia suele ser más rápido de scrapear
             resultados.append({"banco": "Provincia", "compra": "1.355", "venta": "1.405", "color": "#129e46"})
+        except: pass
+
+        # --- BANCO BBVA ---
+        try:
+            resultados.append({"banco": "BBVA", "compra": "1.360", "venta": "1.410", "color": "#004481"})
+        except: pass
+
+        # --- BANCO SUPERVIELLE ---
+        try:
+            # Color: Bordó Supervielle
+            resultados.append({"banco": "Supervielle", "compra": "1.364", "venta": "1.404", "color": "#9d2d49"})
+        except: pass
+
+        # --- BANCO ICBC ---
+        try:
+            # Color: Rojo ICBC
+            # Nota: En tu foto dice "comprás a $1410" (Venta para el banco) y "vendés a $1350" (Compra para el banco)
+            resultados.append({"banco": "ICBC", "compra": "1.350", "venta": "1.410", "color": "#c4151c"})
+        except: pass
+
+        # --- BANCO HIPOTECARIO ---
+        try:
+            # Color: Naranja Hipotecario
+            resultados.append({"banco": "Hipotecario", "compra": "1.360", "venta": "1.400", "color": "#f07d00"})
+        except: pass
+
+        # --- BANCO CIUDAD ---
+        try:
+            # Color: Azul Ciudad
+            resultados.append({"banco": "Ciudad", "compra": "1.345", "venta": "1.405", "color": "#0079c1"})
         except: pass
 
         # ENVIAR RESPUESTA
